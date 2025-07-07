@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to WordPress Theme Converter</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fab fa-wordpress"></i>
+                        <h1>WP Theme Converter</h1>
+                    </div>
+                    <p class="subtitle">Transform your HTML websites into professional WordPress themes</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="container">
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Upload</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Configure</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Convert</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Download</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Step 1: Upload -->
+                <div class="step-content active" id="step-1">
+                    <div class="upload-section">
+                        <h2>Upload Your HTML Website</h2>
+                        <p class="step-description">Choose how you'd like to provide your HTML content</p>
+                        
+                        <div class="upload-options">
+                            <div class="upload-option active" id="upload-file-option">
+                                <div class="option-header">
+                                    <i class="fas fa-file-archive"></i>
+                                    <h3>Upload ZIP File</h3>
+                                </div>
+                                <p>Upload a ZIP file containing your complete HTML website</p>
+                            </div>
+                            
+                            <div class="upload-option" id="upload-html-option">
+                                <div class="option-header">
+                                    <i class="fas fa-code"></i>
+                                    <h3>Paste HTML Code</h3>
+                                </div>
+                                <p>Paste your HTML code directly into the editor</p>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Area -->
+                        <div class="upload-area" id="file-upload-area">
+                            <div class="upload-zone" id="upload-zone">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h3>Drag & Drop your ZIP file here</h3>
+                                <p>or <button type="button" class="btn-link" id="file-picker-btn">browse files</button></p>
+                                <div class="file-requirements">
+                                    <p><strong>Requirements:</strong> ZIP file containing HTML, CSS, JS, and assets</p>
+                                    <p>Must include an index.html file</p>
+                                </div>
+                                <input type="file" id="file-input" accept=".zip" hidden>
+                            </div>
+                            
+                            <div class="upload-progress" id="upload-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <p class="progress-text">Uploading and processing...</p>
+                            </div>
+                            
+                            <div class="file-info" id="file-info" style="display: none;">
+                                <div class="file-details">
+                                    <i class="fas fa-file-archive"></i>
+                                    <div class="file-meta">
+                                        <h4 id="file-name"></h4>
+                                        <p id="file-size"></p>
+                                    </div>
+                                    <button type="button" class="btn-remove" id="remove-file">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="file-structure" id="file-structure"></div>
+                            </div>
+                        </div>
+    
+                        <!-- Subscription Section -->
+                        <div id="subscribe-section" style="display: none; margin-top: 24px; text-align: center;">
+                            <p>Subscribe for <strong>$5</strong> to unlock the download feature.</p>
+                            <button type="button" class="btn-primary" id="subscribe-btn">
+                                <i class="fas fa-lock"></i> Subscribe to Download
+                            </button>
+                        </div>
+    
+                        <!-- Download Section -->
+                        <div id="download-section" style="display: none; margin-top: 24px; text-align: center;">
+                            <button type="button" class="btn-success" id="download-theme">
+                                <i class="fas fa-download"></i> Download WordPress Theme
+                            </button>
+                            <p class="download-note">Your theme is ready! Download after subscribing.</p>
+                        </div>
+
+                        <!-- HTML Code Area -->
+                        <div class="html-area" id="html-upload-area" style="display: none;">
+                            <div class="code-editor">
+                                <div class="editor-header">
+                                    <h3>Paste Your HTML Code</h3>
+                                    <div class="editor-actions">
+                                        <button type="button" class="btn-secondary" id="clear-html">Clear</button>
+                                        <button type="button" class="btn-secondary" id="sample-html">Load Sample</button>
+                                    </div>
+                                </div>
+                                <textarea id="html-code" placeholder="<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Website</title>
+    <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+    <!-- Your HTML content here -->
+
+<style>
+#minimax-floating-ball {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 12px;
+  background: #222222;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  color: #F8F8F8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#minimax-floating-ball:hover {
+  transform: translateY(-2px);
+  background: #383838;
+}
+
+.minimax-ball-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.minimax-logo-wave {
+  width: 26px;
+  height: 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='22' viewBox='0 0 26 22' fill='none'%3E%3Cg clip-path='url(%23clip0_3442_102412)'%3E%3Cpath d='M12.8405 14.6775C12.8405 14.9897 13.0932 15.2424 13.4055 15.2424C13.7178 15.2424 13.9705 14.9897 13.9705 14.6775V2.98254C13.9705 1.88957 13.0809 1 11.9879 1C10.895 1 10.0054 1.88957 10.0054 2.98254V11.566V17.1068C10.0054 17.5773 9.62327 17.9594 9.1528 17.9594C8.68233 17.9594 8.30021 17.5773 8.30021 17.1068V8.04469C8.30021 6.95172 7.41063 6.06215 6.31767 6.06215C5.22471 6.06215 4.33513 6.95172 4.33513 8.04469V11.8855C4.33513 12.3559 3.953 12.7381 3.48254 12.7381C3.01207 12.7381 2.62994 12.3559 2.62994 11.8855V10.4936C2.62994 10.1813 2.37725 9.92861 2.06497 9.92861C1.7527 9.92861 1.5 10.1813 1.5 10.4936V11.8855C1.5 12.9784 2.38957 13.868 3.48254 13.868C4.5755 13.868 5.46508 12.9784 5.46508 11.8855V8.04469C5.46508 7.57422 5.8472 7.19209 6.31767 7.19209C6.78814 7.19209 7.17026 7.57422 7.17026 8.04469V17.1068C7.17026 18.1998 8.05984 19.0894 9.1528 19.0894C10.2458 19.0894 11.1353 18.1998 11.1353 17.1068V2.98254C11.1353 2.51207 11.5175 2.12994 11.9879 2.12994C12.4584 2.12994 12.8405 2.51207 12.8405 2.98254V14.6775Z' fill='%23F8F8F8'/%3E%3Cpath d='M23.3278 6.06215C22.2348 6.06215 21.3452 6.95172 21.3452 8.04469V15.6143C21.3452 16.0847 20.9631 16.4669 20.4926 16.4669C20.0222 16.4669 19.6401 16.0847 19.6401 15.6143V2.98254C19.6401 1.88957 18.7505 1 17.6575 1C16.5645 1 15.675 1.88957 15.675 2.98254V19.0175C15.675 19.4879 15.2928 19.8701 14.8224 19.8701C14.3519 19.8701 13.9698 19.4879 13.9698 19.0175V17.0329C13.9698 16.7206 13.7171 16.4679 13.4048 16.4679C13.0925 16.4679 12.8398 16.7206 12.8398 17.0329V19.0175C12.8398 20.1104 13.7294 21 14.8224 21C15.9153 21 16.8049 20.1104 16.8049 19.0175V2.98254C16.8049 2.51207 17.187 2.12994 17.6575 2.12994C18.128 2.12994 18.5101 2.51207 18.5101 2.98254V15.6143C18.5101 16.7072 19.3997 17.5968 20.4926 17.5968C21.5856 17.5968 22.4752 16.7072 22.4752 15.6143V8.04469C22.4752 7.57422 22.8573 7.19209 23.3278 7.19209C23.7982 7.19209 24.1804 7.57422 24.1804 8.04469V14.6775C24.1804 14.9897 24.4331 15.2424 24.7453 15.2424C25.0576 15.2424 25.3103 14.9897 25.3103 14.6775V8.04469C25.3103 6.95172 24.4207 6.06215 23.3278 6.06215Z' fill='%23F8F8F8'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_3442_102412'%3E%3Crect width='25' height='22' fill='white' transform='translate(0.5)'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.minimax-ball-text {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.minimax-close-icon {
+  margin-left: 8px;
+  font-size: 16px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.minimax-close-icon:hover {
+  opacity: 1;
+}
+</style>
+<div id="minimax-floating-ball">
+  <div class="minimax-ball-content">
+    <div class="minimax-logo-wave"></div>
+    <span class="minimax-ball-text">Created by MiniMax Agent</span>
+  </div>
+  <div class="minimax-close-icon">×</div>
+</div>
+<script>
+// Initialize floating ball functionality
+function initFloatingBall() {
+  const ball = document.getElementById('minimax-floating-ball');
+  if (!ball) return;
+
+  // Initial animation
+  ball.style.opacity = '0';
+  ball.style.transform = 'translateY(20px)';
+
+  setTimeout(() => {
+    ball.style.opacity = '1';
+    ball.style.transform = 'translateY(0)';
+  }, 500);
+
+  // Handle logo click
+  const ballContent = ball.querySelector('.minimax-ball-content');
+  ballContent.addEventListener('click', function (e) {
+    e.stopPropagation();
+    window.open('https://agent.minimax.io/agent', '_blank');
+    ball.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      ball.style.transform = 'scale(1)';
+    }, 100);
+  });
+
+  // Handle close button click
+  const closeIcon = ball.querySelector('.minimax-close-icon');
+  closeIcon.addEventListener('click', function (e) {
+    e.stopPropagation();
+    ball.style.opacity = '0';
+    ball.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+      ball.style.display = 'none';
+    }, 300);
+  });
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initFloatingBall); 
+</script>
+
+</body>
+</html>"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-primary" id="next-step-1" disabled>
+                                Next: Configure Theme
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Configure -->
+                <div class="step-content" id="step-2">
+                    <div class="config-section">
+                        <h2>Configure Your WordPress Theme</h2>
+                        <p class="step-description">Provide details for your WordPress theme</p>
+                        
+                        <form class="theme-config-form" id="theme-config-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="theme-name">Theme Name *</label>
+                                    <input type="text" id="theme-name" name="theme-name" required 
+                                           placeholder="My Awesome Theme" value="Custom Theme">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="theme-version">Version</label>
+                                    <input type="text" id="theme-version" name="theme-version" 
+                                           placeholder="1.0.0" value="1.0.0">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="theme-author">Author</label>
+                                    <input type="text" id="theme-author" name="theme-author" 
+                                           placeholder="Your Name" value="Theme Developer">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="theme-uri">Theme URI</label>
+                                    <input type="url" id="theme-uri" name="theme-uri" 
+                                           placeholder="https://yourwebsite.com">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="theme-description">Description</label>
+                                <textarea id="theme-description" name="theme-description" 
+                                          placeholder="A beautiful and responsive WordPress theme converted from HTML"
+                                          rows="3">A custom WordPress theme converted from HTML with modern design and responsive layout.</textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="theme-tags">Tags (comma-separated)</label>
+                                    <input type="text" id="theme-tags" name="theme-tags" 
+                                           placeholder="responsive, modern, clean" 
+                                           value="responsive, custom, modern">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="text-domain">Text Domain</label>
+                                    <input type="text" id="text-domain" name="text-domain" 
+                                           placeholder="theme-textdomain" value="custom-theme">
+                                </div>
+                            </div>
+
+                            <div class="advanced-options">
+                                <h3>
+                                    <i class="fas fa-cog"></i>
+                                    Advanced Options
+                                    <button type="button" class="toggle-advanced" id="toggle-advanced">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </h3>
+                                
+                                <div class="advanced-content" id="advanced-content">
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="generate-templates" checked>
+                                            <span class="checkmark"></span>
+                                            Generate additional templates (page.php, single.php)
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="enqueue-assets" checked>
+                                            <span class="checkmark"></span>
+                                            Auto-enqueue CSS and JS files
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="add-menus" checked>
+                                            <span class="checkmark"></span>
+                                            Add WordPress menu support
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="add-widgets" checked>
+                                            <span class="checkmark"></span>
+                                            Add sidebar and widget support
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-secondary" id="back-step-2">
+                                <i class="fas fa-arrow-left"></i>
+                                Back
+                            </button>
+                            <button type="button" class="btn-primary" id="next-step-2">
+                                Next: Convert Theme
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Convert -->
+                <div class="step-content" id="step-3">
+                    <div class="convert-section">
+                        <h2>Converting Your Theme</h2>
+                        <p class="step-description">Processing your HTML and generating WordPress theme files</p>
+                        
+                        <div class="conversion-progress">
+                            <div class="conversion-steps">
+                                <div class="conversion-step" id="parse-html">
+                                    <i class="fas fa-code"></i>
+                                    <span>Parsing HTML structure</span>
+                                    <div class="step-status">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversion-step" id="extract-assets">
+                                    <i class="fas fa-images"></i>
+                                    <span>Extracting assets and styles</span>
+                                    <div class="step-status">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversion-step" id="generate-templates">
+                                    <i class="fab fa-wordpress"></i>
+                                    <span>Generating WordPress templates</span>
+                                    <div class="step-status">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversion-step" id="create-functions">
+                                    <i class="fas fa-cogs"></i>
+                                    <span>Creating functions.php</span>
+                                    <div class="step-status">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="conversion-step" id="package-theme">
+                                    <i class="fas fa-archive"></i>
+                                    <span>Packaging theme files</span>
+                                    <div class="step-status">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conversion-log" id="conversion-log">
+                            <h3>Conversion Log</h3>
+                            <div class="log-content" id="log-content">
+                                <p>Starting conversion process...</p>
+                            </div>
+                        </div>
+
+                        <div class="step-actions" id="convert-actions" style="display: none;">
+                            <button type="button" class="btn-secondary" id="back-step-3">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Configuration
+                            </button>
+                            <button type="button" class="btn-primary" id="start-conversion">
+                                <i class="fas fa-magic"></i>
+                                Start Conversion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Download -->
+                <div class="step-content" id="step-4">
+                    <div class="download-section">
+                        <h2>Your WordPress Theme is Ready!</h2>
+                        <p class="step-description">Preview and download your converted WordPress theme</p>
+                        
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Conversion Completed Successfully</h3>
+                            <p>Your HTML website has been converted into a WordPress theme</p>
+                        </div>
+
+                        <div class="theme-preview">
+                            <div class="preview-header">
+                                <h3>Generated Files</h3>
+                                <div class="preview-actions">
+                                    <button type="button" class="btn-secondary" id="toggle-preview">
+                                        <i class="fas fa-eye"></i>
+                                        Toggle Preview
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="file-tree" id="file-tree">
+                                <!-- Generated file structure will be displayed here -->
+                            </div>
+                            
+                            <div class="code-preview" id="code-preview" style="display: none;">
+                                <div class="preview-tabs">
+                                    <button class="tab-btn active" data-file="style.css">style.css</button>
+                                    <button class="tab-btn" data-file="index.php">index.php</button>
+                                    <button class="tab-btn" data-file="header.php">header.php</button>
+                                    <button class="tab-btn" data-file="footer.php">footer.php</button>
+                                    <button class="tab-btn" data-file="functions.php">functions.php</button>
+                                </div>
+                                
+                                <div class="preview-content">
+                                    <pre><code id="preview-code"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="download-options">
+                            <div class="download-card">
+                                <div class="download-info">
+                                    <h3>WordPress Theme Package</h3>
+                                    <p>Ready-to-install WordPress theme ZIP file</p>
+                                    <div class="theme-stats">
+                                        <span id="file-count">0 files</span>
+                                        <span id="package-size">0 KB</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-download" id="download-theme">
+                                    <i class="fas fa-download"></i>
+                                    Download Theme
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="installation-guide">
+                            <h3>Installation Instructions</h3>
+                            <ol>
+                                <li>Download the theme ZIP file</li>
+                                <li>Log in to your WordPress admin dashboard</li>
+                                <li>Go to <strong>Appearance → Themes</strong></li>
+                                <li>Click <strong>"Add New"</strong> then <strong>"Upload Theme"</strong></li>
+                                <li>Choose the downloaded ZIP file and click <strong>"Install Now"</strong></li>
+                                <li>Activate your new theme</li>
+                            </ol>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-secondary" id="start-over">
+                                <i class="fas fa-redo"></i>
+                                Convert Another Theme
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="container">
+                <p>&copy; 2025 WP Theme Converter. Transform HTML to WordPress themes with ease.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Processing...</h3>
+            <p id="loading-text">Please wait while we process your request</p>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal-overlay" id="error-modal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Error</h3>
+                <button type="button" class="modal-close" id="close-error-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="error-message">An error occurred</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-primary" id="error-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+
+
+</body>
+</html>
