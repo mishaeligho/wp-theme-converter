@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import tempfile
+import logging
+import traceback
 from flask import Flask, request, send_file, jsonify, session, redirect, url_for
 from flask_cors import CORS
 import zipfile
@@ -9,6 +11,9 @@ import uuid
 
 # Stripe integration
 import stripe
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "supersecretkey")
@@ -96,6 +101,8 @@ def create_checkout_session():
         )
         return jsonify({"checkout_url": checkout_session.url})
     except Exception as e:
+        logging.error("Exception in create_checkout_session: %s", str(e))
+        logging.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/stripe/webhook", methods=["POST"])
