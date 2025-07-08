@@ -143,5 +143,10 @@ def subscription_status():
     user_id = session.get("user_id")
     return jsonify({"subscribed": bool(user_id and user_subscriptions.get(user_id))})
 
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    return "Flask is running!", 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

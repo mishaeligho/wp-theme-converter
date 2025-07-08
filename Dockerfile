@@ -1,22 +1,26 @@
 FROM nginx:alpine
 
-# Install Python and pip
+# Install Python 3 and pip
 RUN apk add --no-cache python3 py3-pip
 
-# Copy static files to nginx
+# Copy static files
 COPY index.html /usr/share/nginx/html/
-COPY style.css /usr/share/nginx/html/
-
-# Copy custom nginx config
+COPY css /usr/share/nginx/html/css
+COPY js /usr/share/nginx/html/js
+COPY images /usr/share/nginx/html/images
 COPY nginx.conf /etc/nginx/nginx.conf
 
+
 # Copy Flask backend
-COPY app.py /app/app.py
+COPY server.py /app/server.py
 WORKDIR /app
 
-# Install Flask
-RUN pip3 install Flask
+# Create and activate virtualenv, install Flask
+RUN python3 -m venv /app/venv && \
+    . /app/venv/bin/activate && \
+    pip install Flask flask-cors stripe
 
-# Start NGINX and Flask together
-CMD sh -c "nginx && python3 app.py"
+
+# Run NGINX and Flask together
+CMD sh -c "nginx && /app/venv/bin/python server.py"
 
