@@ -1,26 +1,22 @@
 FROM nginx:alpine
 
-# Install Python 3 and pip
-RUN apk add --no-cache python3 py3-pip
+# Install required packages
+RUN apk add --no-cache python3 py3-pip supervisor
 
-# Copy static files
-COPY index.html /usr/share/nginx/html/
-COPY css /usr/share/nginx/html/css
-COPY js /usr/share/nginx/html/js
-COPY images /usr/share/nginx/html/images
-COPY nginx.conf /etc/nginx/nginx.conf
+# Install Python deps
+COPY requirements.txt /app/requirements.txt
+RUN pip3 install -r /app/requirements.txt
 
-
-# Copy Flask backend
-COPY server.py /app/server.py
+# Copy your Flask app and static files
+COPY . /app
 WORKDIR /app
 
-# Create and activate virtualenv, install Flask
-RUN python3 -m venv /app/venv && \
-    . /app/venv/bin/activate && \
-    pip install Flask flask-cors stripe
+# Copy nginx and supervisor configs
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Expose port 80 (nginx)
+EXPOSE 80
 
-# Run NGINX and Flask together
-CMD sh -c "nginx && /app/venv/bin/python server.py"
-
+# Start both nginx and Flask
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
