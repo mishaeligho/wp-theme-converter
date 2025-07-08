@@ -25,5 +25,9 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Expose NGINX port
 EXPOSE 80
 
+# Healthcheck: check if NGINX is serving the homepage
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget --spider -q http://localhost/ || exit 1
+
 # Start both services
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
