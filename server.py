@@ -20,7 +20,7 @@ os.makedirs(THEME_FOLDER, exist_ok=True)
 
 # Stripe config
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "sk_test_...")
-STRIPE_PRICE_ID = "price_1RiJcoHfyc8LBm6b6hIX0SN4"
+STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID", "price_1RiJcoHfyc8LBm6b6hIX0SN4")
 stripe.api_key = STRIPE_SECRET_KEY
 
 # In-memory store for subscription status (for demo; use DB in production)

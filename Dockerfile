@@ -19,6 +19,9 @@ COPY js /usr/share/nginx/html/js
 COPY images /usr/share/nginx/html/images
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Ensure /var/log exists for Supervisor logs
+RUN mkdir -p /var/log
+
 # Copy Supervisor config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
