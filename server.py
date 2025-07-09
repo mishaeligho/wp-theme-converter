@@ -25,7 +25,8 @@ os.makedirs(THEME_FOLDER, exist_ok=True)
 
 # Stripe config
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "sk_test_...")
-STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID", "price_1RiJcoHfyc8LBm6b6hIX0SN4")
+# Set this to your one-time $5 price ID
+STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID", "price_1RiJZpHfyc8LBm6b86PPRx62")
 stripe.api_key = STRIPE_SECRET_KEY
 
 # In-memory store for subscription status (for demo; use DB in production)
@@ -85,13 +86,13 @@ def create_checkout_session():
     if not user_id:
         return jsonify({"error": "No user session"}), 400
 
-    # Create Stripe Checkout session for subscription
+    # Create Stripe Checkout session for one-time payment
     try:
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
-            mode="subscription",
+            mode="payment",  # One-time payment
             line_items=[{
-                "price": STRIPE_PRICE_ID,
+                "price": STRIPE_PRICE_ID,  # One-time $5 price
                 "quantity": 1,
             }],
             success_url=request.host_url.rstrip("/") + "/success?session_id={CHECKOUT_SESSION_ID}",
@@ -103,7 +104,7 @@ def create_checkout_session():
     except Exception as e:
         logging.error("Exception in create_checkout_session: %s", str(e))
         logging.error(traceback.format_exc())
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Stripe payment error: " + str(e)}), 500
 
 @app.route("/api/stripe/webhook", methods=["POST"])
 def stripe_webhook():
